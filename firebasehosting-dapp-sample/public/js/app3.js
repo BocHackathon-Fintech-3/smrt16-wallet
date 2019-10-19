@@ -1,5 +1,4 @@
 App = {
-  loading: false,
   contracts: {},
 
   load: async () => {
@@ -49,7 +48,7 @@ App = {
 
   loadContract: async () => {
     // Create a JavaScript version of the smart contract
-    const sampleContract = await $.getJSON('Sample.json')
+    const sampleContract = await $.getJSON('./Sample.json')
     App.contracts.Sample = TruffleContract(sampleContract)
     App.contracts.Sample.setProvider(App.web3Provider)
 
@@ -58,56 +57,28 @@ App = {
   },
 
   render: async () => {
-    // Prevent double render
-    if (App.loading) {
-      return
-    }
 
-    // Update app loading state
-    App.setLoading(true)
+    await App.renderAgreementsData()
 
-    // Render Account
-    $('#account').html(App.account)
-
-    // Render Agreements
-    await App.renderAgreements()
-
-    // Update loading state
-    App.setLoading(false)
   },
 
-  renderAgreements: async () => {
+  renderAgreementsData: async () => {
     // Load the total agreement count from the blockchain
-    const agreementCount = await App.sampleContract.agreementCount()
+    const agreementCount = await App.sampleContract.agreementsCounter()
       $("#loader").html("Current agreements count in the blockchain DB: "+agreementCount);
-    }
+    
   },
 
   createAgreement: async () => {
     App.setLoading(true)
     const content = $('#newAgreement').val()
-    await App.sampleContract.createAgreement(content)
-    window.location.reload()
-  },
-
-  toggleCompleted: async (e) => {
-    App.setLoading(true)
-    const agreementId = e.target.name
-    await App.sampleContract.toggleCompleted(agreementId)
+    await App.sampleContract.createNewAgreement(content)
     window.location.reload()
   },
 
   setLoading: (boolean) => {
     App.loading = boolean
-    const loader = $('#loader')
-    const content = $('#content')
-    if (boolean) {
-      loader.show()
-      content.hide()
-    } else {
-      loader.hide()
-      content.show()
-    }
+    
   }
 }
 

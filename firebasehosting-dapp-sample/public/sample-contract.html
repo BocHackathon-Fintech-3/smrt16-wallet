@@ -21,10 +21,10 @@
 <p><img style="margin: auto; width: 200px; display: block;" src="https://www.eac.com.cy/_catalogs/masterpage/EAC/img/logo-header-en.png" /></p>
     <h2 style="color: #2e6c80; text-align: center;"><strong>Sample of an Electronic Contract</strong></h2>
 
-<div class="column" style="padding: 10px">
+<div class="column" id="agrtxt" style="padding: 10px">
 <p style="text-align: center;"><strong>Agreement with Electricity Provider Company</strong></p>
 <p>This Agreement made between The Electricity Company and:</p>
-<form onSubmit="App.createAgreement();">
+<form onSubmit="App.createAgreement(); $('#agrtxt').hide(); $('#loader').html('Wait for a some time until the agreement processed'); return false;">
   <input id="newAgreement" type="text" class="form-control" placeholder="Input your address and legal name" required>
 
 
@@ -40,8 +40,7 @@
 <p>and shall continue in full force and effect from month to month unless and until terminated by either party by written notice given no less than thirty (30) days prior to the desired termination date (&ldquo;Termination Date&rdquo;), except as provided in Sections VI and XII of this Agreement.&nbsp;</p>
 <p>&nbsp;</p>
 <p><strong>Signature:&nbsp;</strong></p>
-
- <input type="submit" text="I Confirm and Sign" hidden="">
+ <input type="submit" value="I Confirm and Sign" style="border: 1px solid silver">
 </form>
 </div>
 
@@ -50,7 +49,7 @@
     <h1 class="text-center">Agreements count (Sample data from smart contract)</h1>
     <hr/>
     <br/>
-    <div id="loader">
+    <div id="loader" style="font-size: 16px; font-weight: bold; padding: 30px;">
       <p class="text-center">Loading...</p>
     </div>
     
@@ -63,6 +62,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/web3.min.js"></script>
     <script src="js/truffle-contract.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app3.js"></script>
   </body>
 </html>
