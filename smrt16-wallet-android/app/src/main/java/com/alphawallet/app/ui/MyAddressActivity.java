@@ -273,7 +273,6 @@ public class MyAddressActivity extends BaseActivity implements View.OnClickListe
     {
         wallet = getIntent().getParcelableExtra(WALLET);
         token = getIntent().getParcelableExtra(C.EXTRA_TOKEN_ID);
-
         displayAddress = wallet.address;
         titleView.setText(R.string.my_wallet_address);
         copyButton.setText(R.string.copy_wallet_address);

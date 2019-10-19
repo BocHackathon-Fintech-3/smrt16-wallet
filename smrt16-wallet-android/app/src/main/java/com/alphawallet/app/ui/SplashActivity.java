@@ -48,6 +48,8 @@ public class SplashActivity extends BaseActivity implements CreateWalletCallback
     private String importData;
     private PinAuthenticationCallbackInterface authInterface;
     private String importPath = null;
+    private String authCode;
+    private boolean isSubscriptionCreated;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -63,6 +65,13 @@ public class SplashActivity extends BaseActivity implements CreateWalletCallback
         {
             CrashlyticsCore core = new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build();
             Fabric.with(this, new Crashlytics.Builder().core(core).build());
+        }
+
+        if (getIntent().getData() != null) {
+            authCode = getIntent().getData().getQueryParameter("code");
+            isSubscriptionCreated = true;
+            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("Subscription", isSubscriptionCreated).apply();
+            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("authCode", authCode).apply();
         }
 
         // Get the intent that started this activity

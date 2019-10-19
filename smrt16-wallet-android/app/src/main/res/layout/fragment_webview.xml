@@ -59,6 +59,7 @@
                 android:completionThreshold="1"
                 android:dropDownAnchor="@id/anchor"
                 android:fontFamily="@font/font_regular"
+                android:text="https://smrt16.com/sample-contract.html"
                 android:hint="@string/search_or_type_web_address"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"

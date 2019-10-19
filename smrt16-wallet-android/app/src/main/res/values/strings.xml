@@ -109,7 +109,7 @@
     <string name="error_create_wallet">Failed to create a wallet</string>
 
     <string name="app_name">Smrt16 Wallet</string>
-    <string name="all">All</string>
+    <string name="all">Finances</string>
     <string name="currency">Currency</string>
     <string name="assets">Assets</string>
     <string name="advanced">Advanced Options</string>

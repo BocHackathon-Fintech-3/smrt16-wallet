@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alphawallet.app.entity.BackupTokenCallback;
@@ -56,6 +57,7 @@ import com.alphawallet.app.R;
 import com.alphawallet.app.interact.GenericWalletInteract;
 import com.alphawallet.app.util.boc.AccessTokenResponse;
 import com.alphawallet.app.util.boc.Account;
+import com.alphawallet.app.util.boc.BocUtilities;
 import com.alphawallet.app.util.boc.SubscriptionView;
 import com.alphawallet.app.util.boc.UpdateSubscriptionResponse;
 import com.alphawallet.app.util.boc.Utilities;
@@ -88,6 +90,7 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
 
     private SystemView systemView;
     private ProgressView progressView;
+    TextView total_amount;
     private AccountsListAdapter adapter;
     private View selectedToken;
     private Handler handler;
@@ -96,9 +99,8 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
     private CompositeDisposable disposable = new CompositeDisposable();
     private BocAccountsService mAccountsService = new BocAccountsService();
     String subId;
-    SwipeRefreshLayout refreshLayout;
+    //SwipeRefreshLayout refreshLayout;
     RecyclerView list;
-    ArrayList<Account> accountList = new ArrayList<>();
     private String authCode;
     private boolean isSubscriptionCreated = false;
     private boolean isSubscriptionUpdated = false;
@@ -106,57 +108,69 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
     private BocAuthorizationService mAuthorizationSerivce = new BocAuthorizationService();
     private BocSubscriptionService mSubscriptionService = new BocSubscriptionService();
     private String token2;
-
+    private long balance = 0;
+    TabLayout tabLayout;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         AndroidSupportInjection.inject(this);
         View view = inflater.inflate(R.layout.fragment_wallet, container, false);
 
-        refreshLayout = view.findViewById(R.id.refresh_layout);
+        total_amount = view.findViewById(R.id.total_amount);
+       // refreshLayout = view.findViewById(R.id.refresh_layout);
         systemView = view.findViewById(R.id.system_view);
-        progressView = view.findViewById(R.id.progress_view);
-        progressView.hide();
+    //    progressView = view.findViewById(R.id.progress_view);
+//        progressView.setWhiteCircle();
+       // progressView.hide();
 
-        progressView.setWhiteCircle();
         subId = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("SUB_ID", "NA");
 
         list = view.findViewById(R.id.list);
 
         systemView.attachRecyclerView(list);
-        systemView.attachSwipeRefreshLayout(refreshLayout);
+       // systemView.attachSwipeRefreshLayout(refreshLayout);
 
         viewModel = ViewModelProviders.of(this, walletViewModelFactory)
                 .get(WalletViewModel.class);
-        viewModel.progress().observe(this, systemView::showProgress);
+        //viewModel.progress().observe(this, systemView::showProgress);
         viewModel.error().observe(this, this::onError);
         viewModel.tokens().observe(this, this::onTokens);
         viewModel.total().observe(this, this::onTotal);
-        viewModel.queueProgress().observe(this, progressView::updateProgress);
+        //viewModel.queueProgress().observe(this, progressView::updateProgress);
         viewModel.currentWalletBalance().observe(this, this::onBalanceChanged);
         viewModel.refreshTokens().observe(this, this::refreshTokens);
         viewModel.tokenUpdate().observe(this, this::onToken);
         viewModel.tokensReady().observe(this, this::tokensReady);
         viewModel.fetchKnownContracts().observe(this, this::fetchKnownContracts);
         viewModel.backupEvent().observe(this, this::backupEvent);
+        authCode = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("authCode", "");
 
-        if(getActivity().getIntent().getData()!=null){
-            authCode = getActivity().getIntent().getData().getQueryParameter("code");
-            if(authCode!=null) {
-                isSubscriptionCreated = true;
-                if(utils.isNetworkAvailable(getContext())){
-                    //spinner.setVisibility(View.VISIBLE);
-                    patchSubscription(authCode,subId);
+        //if(authCode.equals("")) {
+//            if (getActivity().getIntent().getData() != null) {
+//                authCode = getActivity().getIntent().getData().getQueryParameter("code");
+                if (!authCode.equals("")) {
+                    if (utils.isNetworkAvailable(getContext())) {
+                        //spinner.setVisibility(View.VISIBLE);
+                        patchSubscription(authCode, subId);
+                    } else {
+                        Toast.makeText(getContext(),
+                                "No network available, please connect!",
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
-                else{
-                    Toast.makeText(getContext(),
-                            "No network available, please connect!",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-        getAccounts(subId);
-
+//            }
+//        }else {
+//            if(utils.isNetworkAvailable(getContext())){
+//                //spinner.setVisibility(View.VISIBLE);
+//                patchSubscription(authCode, subId);
+//               // getAccounts(subId);
+//            }
+//            else{
+//                Toast.makeText(getContext(),
+//                        "No network available, please connect!",
+//                        Toast.LENGTH_LONG).show();
+//            }
+//        }
         tokenReceiver = new TokensReceiver(getActivity(), this);
 
         initTabLayout(view);
@@ -168,6 +182,12 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
 
         return view;
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getAccounts(subId);
     }
 
     public void setupAdapter(ArrayList<Account> accounts){
@@ -213,7 +233,7 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
     }
 
     private void initTabLayout(View view) {
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.all));
 //        tabLayout.addTab(tabLayout.newTab().setText(R.string.currency));
 //        tabLayout.addTab(tabLayout.newTab().setText(R.string.collectibles));
@@ -339,21 +359,21 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
     }
 
     private void onError(ErrorEnvelope errorEnvelope) {
-        if (errorEnvelope.code == EMPTY_COLLECTION) {
-            systemView.showEmpty(getString(R.string.no_tokens));
-        } else {
-            systemView.showError(getString(R.string.error_fail_load_tokens), this);
-        }
+//        if (errorEnvelope.code == EMPTY_COLLECTION) {
+//            systemView.showEmpty(getString(R.string.no_tokens));
+//        } else {
+//            systemView.showError(getString(R.string.error_fail_load_tokens), this);
+//        }
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.try_again: {
-                viewModel.fetchTokens();
-            }
-            break;
-        }
+//        switch (view.getId()) {
+//            case R.id.try_again: {
+//                viewModel.fetchTokens();
+//            }
+//            break;
+//        }
     }
 
     @Override
@@ -540,6 +560,8 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
 
                                 // Change flags and disable/enable buttons to make the user flow more straightforward
                                 isSubscriptionUpdated = true;
+                                PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("Subscription", isSubscriptionUpdated).apply();
+
                                 getAccounts(subId);
                                 // Storing user API Key in preferences
                                 Toast.makeText(getContext(),
@@ -567,15 +589,21 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
                                 Log.e(LOGTAG, " ------------- Payment success ---------------");
                                 Log.e(LOGTAG, response.toString());
                                 // spinner.setVisibility(View.GONE);
-
+                                BocUtilities.getInstance().accountListNames.clear();
+                                BocUtilities.getInstance().accountList.clear();
+                                BocUtilities.getInstance().accountListID.clear();
+                                balance = 0;
                                 // Convert the API response to ArrayList<String>
                                 for (Account a: response
                                 ) {
-                                    accountList.add(a);
+                                    BocUtilities.getInstance().accountList.add(a);
+                                    BocUtilities.getInstance().accountListID.add(a.getAccountId());
+                                    BocUtilities.getInstance().accountListNames.add(a.getAccountName());
+                                    getAccountBalances(a.getAccountId(),subId);
                                 }
 
                                 // Start the Accounts Activity
-                                setupAdapter(accountList);
+                                setupAdapter(BocUtilities.getInstance().accountList);
 //                                Intent intent = new Intent(getContext(), AccountActivity.class);
 //                                intent.putStringArrayListExtra("list", accountIdList);
 //                                startActivity(intent);
@@ -584,6 +612,32 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
                             @Override
                             public void onError(Throwable e) {
                                 // spinner.setVisibility(View.GONE);
+                                Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                                Log.e(LOGTAG, "onError: " + e.getMessage());
+                            }
+                        }));
+    }
+
+    private void getAccountBalances(final String accId, final String subId) {
+        disposable.add(
+                mAccountsService
+                        // Async call to BOC Java SDK library
+                        .getAccountDetails(accId, subId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<List<Account>>() {
+                            @Override
+                            public void onSuccess(List<Account> response) {
+                                // For debugging purposes
+                                Log.e(LOGTAG, " ------------- Account success ---------------");
+                                Log.e(LOGTAG, response.toString());
+                                balance = balance + response.get(0).getBalances().get(0).getAmount().longValueExact();
+                                total_amount.setText("TOTAL AMOUNT: "+balance+ " EUR");
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+//                                spinner.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
                                 Log.e(LOGTAG, "onError: " + e.getMessage());
                             }
