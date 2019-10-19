@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "455831409862",
+    "firebase_url": "https://smrt16-d1904.firebaseio.com",
+    "project_id": "smrt16-d1904",
+    "storage_bucket": "smrt16-d1904.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455831409862:android:cada717d73031905aa73c7",
+        "android_client_info": {
+          "package_name": "com.smrt16.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455831409862-pkmrq912ohmnp59pd8c0sstho7kk5het.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAxIIqZWACMJqM-szGvJkeXpXk2-Jnoy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455831409862-pkmrq912ohmnp59pd8c0sstho7kk5het.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
