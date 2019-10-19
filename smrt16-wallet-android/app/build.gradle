@@ -24,7 +24,7 @@ repositories {
 
 android {
     dexOptions {
-        javaMaxHeapSize "4G"
+        javaMaxHeapSize "8G"
     }
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
@@ -63,11 +63,11 @@ android {
     }
     flavorDimensions "targetting"
     productFlavors {
-	awallet {
-		dimension "targetting"
-        versionCode 79
-        versionName "2.12.3"
-	}
+        awallet {
+            dimension "targetting"
+            versionCode 79
+            versionName "2.12.3"
+        }
     }
     buildTypes {
         debug {
