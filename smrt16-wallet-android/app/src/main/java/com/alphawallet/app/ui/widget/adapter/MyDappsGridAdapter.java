@@ -73,7 +73,7 @@ public class MyDappsGridAdapter extends RecyclerView.Adapter<MyDappsGridAdapter.
             Glide.with(viewHolder.icon.getContext())
                     .load(favicon)
                     .apply(new RequestOptions().circleCrop())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_logo))
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_launcher))
                     .into(viewHolder.icon);
 
             viewHolder.icon.setOnClickListener(v -> {

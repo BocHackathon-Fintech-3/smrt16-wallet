@@ -106,7 +106,7 @@ public class BocAccountsService {
                 String journeyId = ApiConfiguration.JOURNEY_ID;
                 String originUserId = ApiConfiguration.ORIGIN_USER_ID;
 
-                Statement response = accService.getAccountStatement(accId, subId, "","", new BigDecimal(1), journeyId,originUserId,tppId,null,null,null,null,null,null,null);
+                Statement response = accService.getAccountStatement(accId, subId, "01/01/2016","01/01/2018", new BigDecimal(10), journeyId,originUserId,tppId,null,null,null,null,null,null,null);
                 return response;
             }
         });

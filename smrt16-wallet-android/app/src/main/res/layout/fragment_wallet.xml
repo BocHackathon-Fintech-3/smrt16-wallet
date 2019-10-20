@@ -39,7 +39,7 @@
         android:layout_marginStart="10dp"
         android:textColor="@color/white"
         android:textSize="24dp"
-        android:text="111">
+        android:text="">
     </TextView>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"

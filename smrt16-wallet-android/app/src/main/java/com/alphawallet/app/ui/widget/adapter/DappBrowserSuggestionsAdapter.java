@@ -120,7 +120,7 @@ public class DappBrowserSuggestionsAdapter extends ArrayAdapter<DApp> implements
             Glide.with(icon.getContext())
                     .load(favicon)
                     .apply(new RequestOptions().circleCrop())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_logo))
+                    .apply(new RequestOptions().placeholder(R.drawable.ic_launcher))
                     .into(icon);
         }
 

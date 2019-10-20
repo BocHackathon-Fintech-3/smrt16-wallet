@@ -153,9 +153,9 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
                         //spinner.setVisibility(View.VISIBLE);
                         patchSubscription(authCode, subId);
                     } else {
-                        Toast.makeText(getContext(),
-                                "No network available, please connect!",
-                                Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getContext(),
+//                                "No network available, please connect!",
+//                                Toast.LENGTH_LONG).show();
                     }
                 }
 //            }
@@ -564,14 +564,14 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
 
                                 getAccounts(subId);
                                 // Storing user API Key in preferences
-                                Toast.makeText(getContext(),
-                                        "Patch Subscription successful!! ",
-                                        Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getContext(),
+//                                        "Patch Subscription successful!! ",
+                                      //  Toast.LENGTH_LONG).show();
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                               // Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
                                 Log.e(LOGTAG, "onError: " + e.getMessage());
                             }
                         }));
@@ -612,7 +612,7 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
                             @Override
                             public void onError(Throwable e) {
                                 // spinner.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                           //     Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
                                 Log.e(LOGTAG, "onError: " + e.getMessage());
                             }
                         }));
@@ -638,7 +638,7 @@ public class WalletFragment extends Fragment implements OnTokenClickListener, Vi
                             @Override
                             public void onError(Throwable e) {
 //                                spinner.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                               // Toast.makeText(getContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
                                 Log.e(LOGTAG, "onError: " + e.getMessage());
                             }
                         }));

@@ -113,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                     createSubscription();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(),
-                            "No network available, please connect!",
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(),
+//                            "No network available, please connect!",
+//                            Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
 
                             @Override
                             public void onError(Throwable e) {
-                                Toast.makeText(getApplicationContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                               // Toast.makeText(getApplicationContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
                                 Log.e(LOGTAG, "onError: " + e.getMessage());
                             }
                         }));

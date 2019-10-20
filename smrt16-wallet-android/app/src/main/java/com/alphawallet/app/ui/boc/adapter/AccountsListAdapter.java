@@ -19,6 +19,7 @@ import com.alphawallet.app.ui.boc.AccountDetailsActivity;
 import com.alphawallet.app.ui.boc.PaymentActivity;
 import com.alphawallet.app.util.boc.Account;
 import com.alphawallet.app.util.boc.Statement;
+import com.alphawallet.app.util.boc.Transaction;
 import com.alphawallet.app.util.boc.Utilities;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getAccountDetails(accounts.get(position).getAccountId(),subId);
+                getTransactions(accounts.get(position).getAccountId(),subId);
 
             }
         });
@@ -106,26 +107,29 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
 
     private void getTransactions(final String accId, final String subId) {
 
-//        disposable.add(
-//                mAccountsService
-//                        // Async call to BOC Java SDK library
-//                        .getAccountStatement(accId, subId).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new SingleObserver<Statement>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(Statement o) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//                });
+        disposable.add(
+                mAccountsService
+                        // Async call to BOC Java SDK library
+                        .getAccountStatement(accId, subId).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Statement>(){
+
+                            @Override
+                            public void onSuccess(Statement statement) {
+                                Log.e(LOGTAG, " ------------- Statments success ---------------");
+                                Transaction transaction = statement.getTransaction().get(0);
+                                Log.e(LOGTAG, "Getting transactions");
+                                Log.e(LOGTAG, transaction.getDescription());
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(LOGTAG, "onError: " + e.getMessage());
+
+                            }
+                        }));
+
 
     }
 
