@@ -17,6 +17,7 @@ import com.alphawallet.app.R;
 import com.alphawallet.app.service.boc.BocAccountsService;
 import com.alphawallet.app.service.boc.BocAuthorizationService;
 import com.alphawallet.app.service.boc.BocSubscriptionService;
+import com.alphawallet.app.ui.HomeActivity;
 import com.alphawallet.app.util.boc.AccessTokenResponse;
 import com.alphawallet.app.util.boc.Account;
 import com.alphawallet.app.util.boc.ApiConfiguration;
@@ -25,6 +26,8 @@ import com.alphawallet.app.util.boc.SubscriptionView;
 import com.alphawallet.app.util.boc.UpdateSubscriptionResponse;
 import com.alphawallet.app.util.boc.Utilities;
 import com.testfairy.TestFairy;
+
+import org.web3j.abi.datatypes.Int;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
 
     private final String LOGTAG = this.getClass().getName();
     private Button btnCreateSub;
-    private Button btnPatch;
-    private Button btnPay;
-    private Button btnAccounts;
+//    private Button btnPatch;
+//    private Button btnPay;
+//    private Button btnAccounts;
     private ProgressBar spinner;
 
     private CompositeDisposable disposable = new CompositeDisposable();
@@ -68,20 +71,27 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
         TestFairy.begin(this, "SDK-2JiBv9kE");
         setContentView(R.layout.activity_main);
 
+        isSubscriptionCreated = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("Subscription", false);
+        authCode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("authCode", "");
+
+//        if(isSubscriptionCreated){
+//            Intent intent = new Intent(this, HomeActivity.class);
+//            startActivity(intent);
+//        }
         spinner = findViewById(R.id.progressbar_boc);
         spinner.setVisibility(View.GONE);
 
         btnCreateSub = findViewById(R.id.btn_createsub);
-        btnPatch = findViewById(R.id.btn_patch);
-        btnPay = findViewById(R.id.btn_pay);
-        btnAccounts = findViewById(R.id.btn_accounts);
-
-        // Change flags and disable/enable buttons to make the user flow more straightforward
-        if(!isSubscriptionCreated && !isSubscriptionUpdated){
-            disableButton(btnPatch);
-            disableButton(btnPay);
-            disableButton(btnAccounts);
-        }
+//        btnPatch = findViewById(R.id.btn_patch);
+//        btnPay = findViewById(R.id.btn_pay);
+//        btnAccounts = findViewById(R.id.btn_accounts);
+//
+//        // Change flags and disable/enable buttons to make the user flow more straightforward
+//        if(!isSubscriptionCreated && !isSubscriptionUpdated){
+//            disableButton(btnPatch);
+//            disableButton(btnPay);
+//            disableButton(btnAccounts);
+//        }
 
         // Change flags and disable/enable buttons to make the user flow more straightforward
 //        if(getIntent().getData()!=null){
@@ -111,59 +121,59 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
         });
 
 
-        btnPatch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get subscription ID from application shared preferences
-                String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
-                // Check if network is available and call the API to patch the retrieved subscription ID
-                if(utils.isNetworkAvailable(getApplicationContext())){
-                    spinner.setVisibility(View.VISIBLE);
-                    patchSubscription(authCode,subId);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),
-                            "No network available, please connect!",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+//        btnPatch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Get subscription ID from application shared preferences
+//                String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
+//                // Check if network is available and call the API to patch the retrieved subscription ID
+//                if(utils.isNetworkAvailable(getApplicationContext())){
+//                    spinner.setVisibility(View.VISIBLE);
+//                    patchSubscription(authCode,subId);
+//                }
+//                else{
+//                    Toast.makeText(getApplicationContext(),
+//                            "No network available, please connect!",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
 
 
-        btnPay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Check if network is available and start the Payments Activity
-                if(utils.isNetworkAvailable(getApplicationContext())){
-                    Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
-                    startActivity(intent);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),
-                            "No network available, please connect!",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+//        btnPay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Check if network is available and start the Payments Activity
+//                if(utils.isNetworkAvailable(getApplicationContext())){
+//                    Intent intent = new Intent(getApplicationContext(), PaymentActivity.class);
+//                    startActivity(intent);
+//                }
+//                else{
+//                    Toast.makeText(getApplicationContext(),
+//                            "No network available, please connect!",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
 
 
-        btnAccounts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get subscription ID from application shared preferences
-                String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
-                // Check if network is available and call the API to get the available accounts from the retrieved subscriptionID and start the Accounts Activity
-                if(utils.isNetworkAvailable(getApplicationContext())){
-                    spinner.setVisibility(View.VISIBLE);
-                    getAccounts(subId);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),
-                            "No network available, please connect!",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+//        btnAccounts.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Get subscription ID from application shared preferences
+//                String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
+//                // Check if network is available and call the API to get the available accounts from the retrieved subscriptionID and start the Accounts Activity
+//                if(utils.isNetworkAvailable(getApplicationContext())){
+//                    spinner.setVisibility(View.VISIBLE);
+//                    getAccounts(subId);
+//                }
+//                else{
+//                    Toast.makeText(getApplicationContext(),
+//                            "No network available, please connect!",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
 
     }
 
@@ -213,9 +223,10 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                                 // Change flags and disable/enable buttons to make the user flow more straightforward
                                 spinner.setVisibility(View.GONE);
                                 isSubscriptionUpdated = true;
-                                disableButton(btnPatch);
-                                enableButton(btnAccounts);
-                                enableButton(btnPay);
+
+//                                disableButton(btnPatch);
+//                                enableButton(btnAccounts);
+//                                enableButton(btnPay);
                                 // Storing user API Key in preferences
                                 Toast.makeText(getApplicationContext(),
                                         "Patch Subscription successful!! ",
@@ -261,9 +272,9 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                                 url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize?response_type=code&redirect_uri=https://bocandroid.com/callback&scope=UserOAuth2Security&client_id=7c7bcb8f-7930-495d-adc2-e69f1afb07da&subscriptionid="+subscriptionId;
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                 startActivity(browserIntent);
-                                enableButton(btnPatch);
-                                disableButton(btnPay);
-                                disableButton(btnAccounts);
+//                                enableButton(btnPatch);
+//                                disableButton(btnPay);
+//                                disableButton(btnAccounts);
                             }
 
                             @Override

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,13 +16,18 @@ import com.alphawallet.app.R;
 import com.alphawallet.app.service.boc.BocAccountsService;
 import com.alphawallet.app.service.boc.BocSubscriptionService;
 import com.alphawallet.app.ui.boc.AccountDetailsActivity;
+import com.alphawallet.app.ui.boc.PaymentActivity;
 import com.alphawallet.app.util.boc.Account;
+import com.alphawallet.app.util.boc.Statement;
+import com.alphawallet.app.util.boc.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -34,6 +40,7 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
     private BocAccountsService mAccountsService = new BocAccountsService();
     private final String LOGTAG = this.getClass().getName();
     private String subId;
+    private Utilities utils = new Utilities();
 
     public AccountsListAdapter(Context context, ArrayList<Account> accounts) {
         mContext = context;
@@ -60,6 +67,21 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
             @Override
             public void onClick(View view) {
                 getAccountDetails(accounts.get(position).getAccountId(),subId);
+
+            }
+        });
+        holder.payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(utils.isNetworkAvailable(mContext)){
+                    Intent intent = new Intent(mContext, PaymentActivity.class);
+                    mContext.startActivity(intent);
+                }
+                else{
+                    Toast.makeText(mContext,
+                            "No network available, please connect!",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -72,16 +94,44 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
             TextView accountName;
             TextView accountBalance;
+            Button payButton;
         public ViewHolder(View itemView) {
             super(itemView);
             accountName = (TextView)itemView.findViewById(R.id.account_name);
             accountBalance = (TextView)itemView.findViewById(R.id.account_money);
+            payButton = (Button) itemView.findViewById(R.id.pay_button);
 
         }
     }
 
+    private void getTransactions(final String accId, final String subId) {
+
+//        disposable.add(
+//                mAccountsService
+//                        // Async call to BOC Java SDK library
+//                        .getAccountStatement(accId, subId).subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new SingleObserver<Statement>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(Statement o) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//                });
+
+    }
+
 
     private void getAccountDetails(final String accId, final String subId) {
+
         disposable.add(
                 mAccountsService
                         // Async call to BOC Java SDK library
@@ -127,7 +177,7 @@ public class AccountsListAdapter extends RecyclerView.Adapter<AccountsListAdapte
                                 // For debugging purposes
                                 Log.e(LOGTAG, " ------------- Account success ---------------");
                                 Log.e(LOGTAG, response.toString());
-                                holder.accountBalance.setText(response.get(0).getBalances().get(0).getAmount().toString());
+                                holder.accountBalance.setText(response.get(0).getBalances().get(0).getAmount().toString() + " EUR");
                             }
 
                             @Override

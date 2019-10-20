@@ -36,10 +36,12 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <data
+                    android:host="@string/domain"
+                    android:pathPrefix="/callback"
+                    android:scheme="https" />
                 <data
                     android:host="aw.app"
                     android:pathPrefix="/"
@@ -199,15 +201,15 @@
             android:name=".ui.HomeActivity"
             android:label="@string/toolbar_header_wallet"
             android:windowSoftInputMode="adjustPan" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="@string/domain"
-                    android:pathPrefix="/callback"
-                    android:scheme="https" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <data-->
+<!--                    android:host="@string/domain"-->
+<!--                    android:pathPrefix="/callback"-->
+<!--                    android:scheme="https" />-->
+<!--            </intent-filter>-->
         </activity>
 
         <activity

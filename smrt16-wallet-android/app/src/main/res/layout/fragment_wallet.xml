@@ -7,13 +7,13 @@
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
 
-    <com.alphawallet.app.widget.ProgressView
-        android:id="@+id/progress_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        tools:visibility="gone" />
+<!--    <com.alphawallet.app.widget.ProgressView-->
+<!--        android:id="@+id/progress_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        tools:visibility="gone" />-->
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
@@ -30,19 +30,36 @@
 
     </android.support.design.widget.TabLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <TextView
+        android:id="@+id/total_amount"
         android:layout_below="@id/tab_layout"
-        android:id="@+id/refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:text="111">
+    </TextView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_below="@id/total_amount"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_marginTop="10dp" />
+<!--    <android.support.v4.widget.SwipeRefreshLayout-->
+<!--        android:layout_below="@id/total_amount"-->
+<!--        android:id="@+id/refresh_layout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+<!--        <android.support.v7.widget.RecyclerView-->
+<!--            android:id="@+id/list"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
+<!--    </android.support.v4.widget.SwipeRefreshLayout>-->
 
     <com.alphawallet.app.widget.SystemView
         android:id="@+id/system_view"

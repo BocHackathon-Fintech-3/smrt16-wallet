@@ -6,13 +6,18 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.alphawallet.app.R;
 import com.alphawallet.app.service.boc.BocPaymentsService;
+import com.alphawallet.app.ui.HomeActivity;
+import com.alphawallet.app.util.boc.BocUtilities;
 import com.alphawallet.app.util.boc.Utilities;
 import com.boc.client.model.Amount;
 import com.boc.client.model.CreatePaymentResponse;
@@ -49,11 +54,13 @@ public class PaymentActivity extends AppCompatActivity {
 
     private EditText inputAmount;
     private EditText inputCurrency;
-    private EditText inputDebtor;
-    private EditText inputCreditor;
-    private EditText inputDetails;
-    private EditText inputTerminal;
-    private EditText inputCurrencyRate;
+    private Spinner inputDebtor;
+    private Spinner inputCreditor;
+//    private EditText inputDetails;
+//    private EditText inputTerminal;
+//    private EditText inputCurrencyRate;
+    String debtor;
+    String creditor;
 
     private ArrayList<String> paymentDetailsArray;
 
@@ -62,18 +69,42 @@ public class PaymentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-
         spinner = findViewById(R.id.progressbar_boc);
         spinner.setVisibility(View.GONE);
-
         inputAmount = findViewById(R.id.edit_amount);
         inputCreditor = findViewById(R.id.edit_creditor);
         inputDebtor = findViewById(R.id.edit_debtor);
         inputCurrency = findViewById(R.id.edit_currency);
-        inputDetails = findViewById(R.id.edit_details);
-        inputTerminal = findViewById(R.id.edit_terminal);
-        inputCurrencyRate = findViewById(R.id.edit_currency_rate);
+//        inputDetails = findViewById(R.id.edit_details);
+//        inputTerminal = findViewById(R.id.edit_terminal);
+//        inputCurrencyRate = findViewById(R.id.edit_currency_rate);
 
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, BocUtilities.getInstance().accountListNames);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        inputCreditor.setAdapter(dataAdapter);
+        inputCreditor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                creditor = BocUtilities.getInstance().accountListID.get(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        inputDebtor.setAdapter(dataAdapter);
+        inputDebtor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                debtor = BocUtilities.getInstance().accountListID.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         btnPay = findViewById(R.id.btn_execute_pay);
         btnPay.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +169,7 @@ public class PaymentActivity extends AppCompatActivity {
                                 spinner.setVisibility(View.GONE);
 
                                 // Start PaymentDetailsActivity
-                                Intent intent = new Intent(getApplicationContext(), PaymentDetailsActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                 intent.putStringArrayListExtra("details",
                                         appendStatusToPaymentDetails(paymentDetailsArray,response));
                                 startActivity(intent);
@@ -182,14 +213,14 @@ public class PaymentActivity extends AppCompatActivity {
 
         SignPaymentRequest requestBody = new SignPaymentRequest();
 
-        requestBody.setCreditor(new Creditor().accountId(inputCreditor.getText().toString()));
-        requestBody.setDebtor(new Debtor().accountId(inputDebtor.getText().toString()));
+        requestBody.setCreditor(new Creditor().accountId(creditor));
+        requestBody.setDebtor(new Debtor().accountId(debtor));
         requestBody.setTransactionAmount(new Amount().amount(new BigDecimal(inputAmount.getText().toString()))
-                .currency(inputCurrency.getText().toString())
-                .currencyRate(inputCurrencyRate.getText().toString()));
+                .currency(inputCurrency.getText().toString()));
+                //.currencyRate(inputCurrencyRate.getText().toString()));
         requestBody.setEndToEndId("");
-        requestBody.setPaymentDetails(inputDetails.getText().toString());
-        requestBody.setTerminalId(inputTerminal.getText().toString());
+//        requestBody.setPaymentDetails(inputDetails.getText().toString());
+//        requestBody.setTerminalId(inputTerminal.getText().toString());
         requestBody.setExecutionDate("");
         requestBody.setValueDate("");
 

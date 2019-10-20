@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.setTitle(R.string.empty);
             }
-            toolbarTitle.setText(title);
+            toolbarTitle.setText("SMRT16 Wallet");
         }
     }
 
